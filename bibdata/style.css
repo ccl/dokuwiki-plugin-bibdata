@@ -1,0 +1,25 @@
+form.bibdataform_plugin fieldset.bibdataform {
+	display: table;
+	width: 90%;
+	margin-top: 15px;
+	margin-bottom: 15px;
+}
+
+form.bibdataform_plugin .cell{
+	display: table-cell;
+	padding: 5px 10px;
+}
+
+form.bibdataform_plugin label.text {
+	width: 100%;
+}
+
+form.bibdataform_plugin label.text input {
+	width: 100%;
+}
+
+form.bibdataform_plugin label.row {
+	display: block;
+	padding: 5px 10px;
+	text-align: left;
+}

@@ -1,0 +1,8 @@
+base    bibdata
+author  Christoph Clausen
+email   christoph.clausen@gmail.com
+date    2010-10-09
+name    bibdata plugin
+desc    BibTeX frontend for the data/datatemplate plugins
+url     http://www.dokuwiki.org/plugin:bibdata
+
