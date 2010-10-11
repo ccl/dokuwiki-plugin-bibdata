@@ -6,27 +6,46 @@
  */
 // must be run within Dokuwiki
 if(!defined('DOKU_INC')) die();
-$dataEntryFile = DOKU_PLUGIN.'datatemplate/syntax/entry.php';
-if(file_exists($dataEntryFile)){
-	require_once $dataEntryFile;
-} else {
-	msg('datatemplate: Cannot find Data plugin.', -1);
-	return;
-}
+require_once(DOKU_PLUGIN.'syntax.php');
 require_once "bibtexParse/PARSEENTRIES.php";
 require_once "bibtexParse/PARSECREATORS.php";
 
-class syntax_plugin_datatemplate_bibdata extends syntax_plugin_datatemplate_entry {
-
+class syntax_plugin_bibdata_entry extends DokuWiki_Syntax_Plugin {
 
 	/**
-	 * Constructor. Load helper plugin
-	 *
-	 function syntax_plugin_datatemplate_bibdata(){
-	 $this->dthlp =& plugin_load('helper', 'data');
-	 if(!$this->dthlp) msg('Loading the data helper failed. Make sure the data plugin is installed.',-1);
-	 }
+     * will hold the datatemplate plugin
+     */
+    var $dtp = null;
+	
+	/**
+	 * Constructor. Load datatemplate plugin.
 	 */
+	 function syntax_plugin_bibdata_entry(){
+	 	$this->dtp =& plugin_load('syntax', 'datatemplate_entry');
+	 	if(!$this->dtp) msg('Loading the datatemplate plugin failed. Make sure the data plugin is installed.',-1);
+	 }
+	 
+    /**
+     * What kind of syntax are we?
+     */
+    function getType(){
+        return 'substition';
+    }
+
+    /**
+     * What about paragraphs?
+     */
+    function getPType(){
+        return 'block';
+    }
+    
+   /**
+     * Where to sort in?
+     */
+    function getSort(){
+        return 155;
+    }
+	 
 
 	/**
 	 * Connect pattern to lexer
@@ -45,7 +64,7 @@ class syntax_plugin_datatemplate_bibdata extends syntax_plugin_datatemplate_entr
 		$bibtex = $matches[2];
 		$dtsyntax = $this->_createDatatemplateSyntax($params, $bibtex);
 		//return $dtsyntax;
-		$data = parent::handle($dtsyntax, $state, $pos, $handler);
+		$data = $this->dtp->handle($dtsyntax, $state, $pos, $handler);
 		$data['bibtex'] = $bibtex;
 		return $data;
 	}
@@ -100,11 +119,14 @@ class syntax_plugin_datatemplate_bibdata extends syntax_plugin_datatemplate_entr
 		return $out;
 	}
 
-	function _showData($data, &$renderer) {
-		parent::_showData($data, $renderer);
-		$renderer->doc .= "<h1>BibTeX Source</h1>\n";
-		$renderer->doc .= '<pre class="code bibtex">';
-		$renderer->doc .= $data[bibtex];
-		$renderer->doc .= '</pre>' . "\n";
+	function render($format, &$renderer, $data) {
+		$return = $this->dtp->render($format, $renderer, $data);
+		if($format == 'xhtml') {
+			$renderer->doc .= "<h1>BibTeX Source</h1>\n";
+			$renderer->doc .= '<pre class="code bibtex">';
+			$renderer->doc .= $data[bibtex];
+			$renderer->doc .= '</pre>' . "\n";
+		}
+		return $return;
 	}
 }

@@ -10,46 +10,15 @@
  * @author     Christoph Clausen <christoph.clausen@gmail.com>
  */
 
-if(!defined('DOKU_INC')) define('DOKU_INC',realpath(dirname(__FILE__).'/../../').'/');
-if(!defined('DOKU_PLUGIN')) define('DOKU_PLUGIN',DOKU_INC.'lib/plugins/');
+// must be run within Dokuwiki
+if(!defined('DOKU_INC')) die();
 require_once(DOKU_PLUGIN.'syntax.php');
 
 /**
  * All DokuWiki plugins to extend the parser/rendering mechanism
  * need to inherit from this class
  */
-class syntax_plugin_datatemplate_bibdataform extends DokuWiki_Syntax_Plugin {
-
-   /**
-    * Get an associative array with plugin info.
-    *
-    * <p>
-    * The returned array holds the following fields:
-    * <dl>
-    * <dt>author</dt><dd>Author of the plugin</dd>
-    * <dt>email</dt><dd>Email address to contact the author</dd>
-    * <dt>date</dt><dd>Last modified date of the plugin in
-    * <tt>YYYY-MM-DD</tt> format</dd>
-    * <dt>name</dt><dd>Name of the plugin</dd>
-    * <dt>desc</dt><dd>Short description of the plugin (Text only)</dd>
-    * <dt>url</dt><dd>Website with more information on the plugin
-    * (eg. syntax description)</dd>
-    * </dl>
-    * @param none
-    * @return Array Information about this plugin class.
-    * @public
-    * @static
-    */
-    function getInfo(){
-        return array(
-            'author' => 'Christoph Clausen',
-            'email'  => 'christoph.clausen@gmail.com',
-            'date'   => '2010-10-09',
-            'name'   => 'Bibdata plugin - bibdataform',
-            'desc'   => 'Inserts a form to facilitate searching in a bibliography.',
-            'url'    => 'none',
-        );
-    }
+class syntax_plugin_bibdata_form extends DokuWiki_Syntax_Plugin {
 
    /**
     * Get the type of syntax this plugin defines.
@@ -114,7 +83,7 @@ class syntax_plugin_datatemplate_bibdataform extends DokuWiki_Syntax_Plugin {
     * @see render()
     */
     function connectTo($mode) {
-      $this->Lexer->addSpecialPattern('<bibdataform>',$mode,'plugin_datatemplate_bibdataform');
+      $this->Lexer->addSpecialPattern('<bibdataform>',$mode,'plugin_bibdata_form');
     }
 	
    /**
