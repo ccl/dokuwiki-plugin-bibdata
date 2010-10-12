@@ -162,6 +162,7 @@ class syntax_plugin_bibdata_form extends DokuWiki_Syntax_Plugin {
   			}
             
             $R->doc .= $this->_htmlform($data);
+            $R->doc .= '<div id="__publist">Nothing.</div>';
             return true;
         }
         return false;
