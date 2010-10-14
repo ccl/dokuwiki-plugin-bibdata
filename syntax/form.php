@@ -142,15 +142,16 @@ class syntax_plugin_bibdata_form extends DokuWiki_Syntax_Plugin {
         if($mode == 'xhtml'){
         	$R->info['cache'] = false;
   			if (isset($_POST['bibdataform']) && checkSecurityToken()) {
+	  			if(!isset($_REQUEST['dataflt'])){
+		            $flt = array();
+		        }elseif(!is_array($_REQUEST['dataflt'])){
+		            $flt = (array) $_REQUEST['dataflt'];
+		        }else{
+		            $flt = $_REQUEST['dataflt'];
+		        }
+  			
   				if($_POST['field'] != 'Select field') {
-	  				$new_flt = $_POST['field'] . '~*' . $_POST['contains'] . '*';
-		  			if(!isset($_REQUEST['dataflt'])){
-			            $flt = array();
-			        }elseif(!is_array($_REQUEST['dataflt'])){
-			            $flt = (array) $_REQUEST['dataflt'];
-			        }else{
-			            $flt = $_REQUEST['dataflt'];
-			        }
+	  				$new_flt = $_POST['field'] . '~*' . $_POST['contains'] . '*'; 
 			        
 			        if($_POST['reset'])
 			        	$_REQUEST['dataflt'] = $new_flt;
@@ -158,6 +159,9 @@ class syntax_plugin_bibdata_form extends DokuWiki_Syntax_Plugin {
 			        	$flt[] = $new_flt;
 			        	$_REQUEST['dataflt'] = $flt;
 			        }
+  				} else {
+  					if($_POST['reset'])
+  						$_REQUEST['dataflt'] = array();
   				}
   			}
             
@@ -178,6 +182,9 @@ class syntax_plugin_bibdata_form extends DokuWiki_Syntax_Plugin {
         		$form->addHidden('dataflt[]', $flt);
         }
         $form->addElement(form_openfieldset(array('_legend' => 'Search/Filter', 'class' => 'bibdataform')));
+        if($_POST['field'] == 'Select field' && !$_POST['reset']) {
+        	$form->addElement('<span style="color:#F00">Please select a search field.</span>');
+        }
         $form->addElement(form_makeMenuField('field', array('Select field', 'Title', 'Author', 'Journal', 'Year', 'Abstract'), '', '', '', 'cell menu'));
         $form->addElement(form_makeTextField('contains', '', '', '', 'cell text'));
         $form->addElement(form_checkboxField(array('_text' => 'Reset previous filters.', 'name' => 'reset','value' => '1', '_class' => 'row')));

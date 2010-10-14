@@ -51,7 +51,7 @@ class syntax_plugin_bibdata_entry extends DokuWiki_Syntax_Plugin {
 	 * Connect pattern to lexer
 	 */
 	function connectTo($mode) {
-		$this->Lexer->addSpecialPattern('<bibdata ?.*?>.*?</bibdata>', $mode, 'plugin_datatemplate_bibdata');
+		$this->Lexer->addSpecialPattern('<bibdata ?.*?>.*?</bibdata>', $mode, 'plugin_bibdata_entry');
 	}
 
 	/**
