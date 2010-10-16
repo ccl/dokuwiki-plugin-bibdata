@@ -1,68 +1,51 @@
 <?php
-
-$txt = '["First", "Second", "Third"]';
-echo $txt;
-
-/*
 if(!defined('DOKU_INC')) define('DOKU_INC',realpath(dirname(__FILE__).'/../../../').'/');
 require_once(DOKU_INC.'inc/init.php');
 require_once(DOKU_INC.'inc/common.php'); //changelog.php=>addLogEntry(), io.php=>io_writeWikiPage(), pageinfo
 require_once(DOKU_INC.'inc/auth.php');
 
-#Variables  
-$origVal = urldecode($_GET["origVal"]);
-$checked = $_GET["checked"];
-$path = $_GET["path"];
+$dataliststr = <<<EOD
+---- datatemplatelist ----
+template: tpl_publication_list
+cols : %pageid%, title, journal, authors, volume, page, year, abstract
+headers : id, title, journal, authors, volume, page, year, abstract
+sort : ^date
+filter : %pageid%~publications:bib:*
+----
+EOD;
 
-$ID = $path;
-$INFO = pageinfo();
-$fileName = $INFO["filepath"];
-
-#Determine Permissions
-$permission = auth_quickaclcheck($ID);
-
-if($permission >= AUTH_EDIT){
-  #Retrieve File Contents
-  $newContents =  file_get_contents($fileName);
-  
-  #Modify Contents
-  $valuePos = strpos($newContents, $origVal);
-  $todoPos = strrpos(substr($newContents, 0, $valuePos), "<todo");
-  
-  $contentChanged = false;
-
-  #Determine position of Action, and adjust <todo> tag as necessary
-  while($valuePos !== FALSE && $todoPos !== FALSE){
-    #Validation - Check to make sure the tag before this text is not a </todo> (it should be <todo...)
-    if(strrpos(substr($newContents, 0, $valuePos), "</todo>") < $todoPos){
-      if($checked == 1){
-        $newContents = substr_replace($newContents, "<todo #>", $todoPos, ($valuePos - $todoPos));
-      }else{
-        $newContents = substr_replace($newContents, "<todo>", $todoPos, ($valuePos - $todoPos));
-      }
-      $contentChanged = true;    
-    }
-    
-    $prevPos = $valuePos;
-    $valuePos = strpos($newContents, $origVal, $prevPos+2);
-    $todoPos = strrpos(substr($newContents, 0, $valuePos), "<todo");
-  }
-
-  if($contentChanged){
-    #Save Update (Minor)
-    io_writeWikiPage($fileName, $newContents, $path, '');
-    addLogEntry(saveOldRevision($path), $path, DOKU_CHANGE_TYPE_MINOR_EDIT, "Checkbox Change", '');
-  }
-
-}else{
-  echo "You do not have permission to edit this file.\nAccess was denied.";
+// Let datatemplatelist handle syntax
+$dtl =& plugin_load('syntax', 'datatemplate_list');
+$data = $dtl->handle($dataliststr, DOKU_LEXER_SPECIAL, 0, $dtl); // Last parameter is not used, but need to pass some reference
+$sqlite = $dtl->dthlp->_getDB();
+if(!$sqlite) {
+	echo "Could not connect to SQLite DB.";
+	return;
 }
 
-#(Possible) Alternative Method
-//Retrieve mtime from file
-//Load Data
-//Modify Data
-//Save Data
-//Replace new mtime with previous one
-*/
+$sql = $dtl->_buildSQL($data);
+$headers = $data['headers'];
+$res = $sqlite->query($sql);
+$out = "[";
+$rows = sqlite_fetch_all($res, SQLITE_NUM);
+$row_cnt = count($rows);
+for($i = 0; $i < $row_cnt; $i++) {
+	$row = $rows[$i];
+	$out .= "{";
+	$cnt = count($row);
+	foreach($headers as $num => $h) {
+		$search = array("{", "}", '\\', '"');
+		$replace = array("", "", "", '\"');
+		if($h == "authors") {
+			$search[] = "\n";
+			$replace[] = ",";
+		}
+		$out .= "\"$h\"" . ": \"" . trim(str_replace($search, $replace, $row[$num])) . "\"";
+		if($num < $cnt - 1) $out .= ",";
+	}
+	$out .= "}";
+	if($i < $row_cnt -1) $out .= ",";
+}
+$out .= "]";
+echo $out;
 ?>
