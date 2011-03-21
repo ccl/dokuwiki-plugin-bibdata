@@ -1,0 +1,15 @@
+<project name="Dokuwiki-Bibdata" basedir="." default="wikidev">
+	<target depends="" name="wikidev">
+		<property file="../wikidev.properties" />
+		<echo message="Starting file transfer to ${server.name}" />
+		<exec dir="." executable="rsync" os="${os}" failonerror="true">
+			<arg value="-auvz" />
+			<arg value="${server.shell}" />
+			<arg value="--exclude=build.xml" />
+			<arg value="--exclude=.*" />
+			<arg value="--del" />
+			<arg value="./" />
+			<arg value="${server.path}bibdata/" />
+		</exec>
+	</target>
+</project>
