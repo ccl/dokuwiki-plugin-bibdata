@@ -124,15 +124,17 @@ class syntax_plugin_bibdata_entry extends DokuWiki_Syntax_Plugin {
 		$return = $this->dtp->render($format, $renderer, $data);
 		if($format == 'xhtml') {
 			$renderer->doc .= "<h1>BibTeX Source</h1>\n";
-			$raw = "<code bibtex>\n";
+			$raw = "<file bibtex $ID.bib>\n";
 
     		$descriptorspec = array(
                0 => array("pipe", "r"),  // stdin is a pipe that the child will read from
                1 => array("pipe", "w"),  // stdout is a pipe that the child will write to
             );
-
-            $process = proc_open('bibclean -max-width 100', $descriptorspec, $pipes);
-
+            
+            $path = DOKU_PLUGIN.'bibdata/bin/bibclean';
+            if(file_exists($path)) {
+            	$process = proc_open($path . ' -no-read-init-files -max-width 100', $descriptorspec, $pipes);
+            }
             if (is_resource($process)) {
                 // $pipes now looks like this:
                 // 0 => writeable handle connected to child stdin
@@ -153,7 +155,7 @@ class syntax_plugin_bibdata_entry extends DokuWiki_Syntax_Plugin {
             } else {
 			    $raw .= $data[bibtex];
             }
-			$raw .= '</code>' . "\n";
+			$raw .= '</file>' . "\n";
 			$instr = p_get_instructions($raw);
 
             // render the instructructions on the fly
