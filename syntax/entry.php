@@ -120,12 +120,45 @@ class syntax_plugin_bibdata_entry extends DokuWiki_Syntax_Plugin {
 	}
 
 	function render($format, &$renderer, $data) {
+	    global $ID;
 		$return = $this->dtp->render($format, $renderer, $data);
 		if($format == 'xhtml') {
 			$renderer->doc .= "<h1>BibTeX Source</h1>\n";
-			$renderer->doc .= '<pre class="code bibtex">';
-			$renderer->doc .= $data[bibtex];
-			$renderer->doc .= '</pre>' . "\n";
+			$raw = "<code bibtex>\n";
+
+    		$descriptorspec = array(
+               0 => array("pipe", "r"),  // stdin is a pipe that the child will read from
+               1 => array("pipe", "w"),  // stdout is a pipe that the child will write to
+            );
+
+            $process = proc_open('bibclean -max-width 100', $descriptorspec, $pipes);
+
+            if (is_resource($process)) {
+                // $pipes now looks like this:
+                // 0 => writeable handle connected to child stdin
+                // 1 => readable handle connected to child stdout
+                // Any error output will be appended to /tmp/error-output.txt
+
+                fwrite($pipes[0], $data[bibtex]);
+                fclose($pipes[0]);
+
+                $cleanbib = stream_get_contents($pipes[1]);
+                fclose($pipes[1]);
+
+                // It is important that you close any pipes before calling
+                // proc_close in order to avoid a deadlock
+                $return_value = proc_close($process);
+
+                $raw .= $cleanbib;
+            } else {
+			    $raw .= $data[bibtex];
+            }
+			$raw .= '</code>' . "\n";
+			$instr = p_get_instructions($raw);
+
+            // render the instructructions on the fly
+            $text = p_render('xhtml', $instr, $info);
+			$renderer->doc .= $text;
 		}
 		return $return;
 	}
