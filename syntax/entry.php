@@ -124,7 +124,7 @@ class syntax_plugin_bibdata_entry extends DokuWiki_Syntax_Plugin {
 		$return = $this->dtp->render($format, $renderer, $data);
 		if($format == 'xhtml') {
 			$renderer->doc .= "<h1>BibTeX Source</h1>\n";
-			$raw = "<file bibtex $ID.bib>\n";
+			$raw = "<code bibtex>\n";
 
     		$descriptorspec = array(
                0 => array("pipe", "r"),  // stdin is a pipe that the child will read from
@@ -155,7 +155,7 @@ class syntax_plugin_bibdata_entry extends DokuWiki_Syntax_Plugin {
             } else {
 			    $raw .= $data[bibtex];
             }
-			$raw .= '</file>' . "\n";
+			$raw .= '</code>' . "\n";
 			$instr = p_get_instructions($raw);
 
             // render the instructructions on the fly
