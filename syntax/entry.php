@@ -63,9 +63,12 @@ class syntax_plugin_bibdata_entry extends DokuWiki_Syntax_Plugin {
 		$params = explode(" ", $matches[1]);
 		$bibtex = $matches[2];
 		$dtsyntax = $this->_createDatatemplateSyntax($params, $bibtex);
-		//return $dtsyntax;
 		$data = $this->dtp->handle($dtsyntax, $state, $pos, $handler);
 		$data['bibtex'] = $bibtex;
+		// For some reason, a key named "----" is erroneously added to the data.
+		// As a workaround, remove this key subsequently.
+		unset($data['data']['----']);
+		unset($data['cols']['----']);
 		return $data;
 	}
 
