@@ -1,8 +1,28 @@
+form.bibdataform_plugin span {
+    width: 15% !important;
+    text-align: left ! important;
+}
+
+form.bibdataform_plugin textarea {
+    height: 15em;
+    text-align: left;
+    width: 80%;
+    display: block;
+    float: left;
+    margin-left: 5px;
+}
+
 form.bibdataform_plugin fieldset.bibdataform {
-	display: table;
-	width: 90%;
-	margin-top: 15px;
-	margin-bottom: 15px;
+    display: table;
+    width: 90%;
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+form.bibdataform_plugin fieldset.bibdataform div {
+    clear:both;
+    text-align:center;
+    padding-top:15px;
 }
 
 form.bibdataform_plugin .cell{
