@@ -17,8 +17,8 @@ class action_plugin_bibdata extends DokuWiki_Action_Plugin {
      * Register its handlers with the DokuWiki's event controller
      */
     function register(&$controller) {
-	$controller->register_hook('ACTION_HEADERS_SEND', 'BEFORE', $this,
-				     '_hook_handlepost');
+        $controller->register_hook('ACTION_HEADERS_SEND', 'BEFORE', $this,
+                                   '_hook_handlepost');
     }
 
     /* Here the form data is treated in the following order:
@@ -28,61 +28,61 @@ class action_plugin_bibdata extends DokuWiki_Action_Plugin {
      * 4) Insert BibTeX and other data
      */
     function _hook_handlepost(&$event, $param) {
-	global $ID;
+        global $ID;
 
-	if (!isset($_POST['bibdataform']) || !checkSecurityToken()) {
-	    return;
-	}
+        if (!isset($_POST['bibdataform']) || !checkSecurityToken()) {
+            return;
+        }
 
-	$ns = cleanID($_POST['targetns']);
-	// Check that page not exists and is creatable
-	$newid = cleanID($ns . ':' . $_POST['Page_id']);
-	if(page_exists($newid)) {
-	    msg('bibdataform: target page already exists!', -1);
-	    return;
-	}
-	$auth = auth_quickaclcheck($newid);
-	if($auth < AUTH_CREATE) {
-	    msg('bibdataform: user rights not sufficient to create target page!', -1);
-	    return;
-	}
+        $ns = cleanID($_POST['targetns']);
+        // Check that page not exists and is creatable
+        $newid = cleanID($ns . ':' . $_POST['Page_id']);
+        if(page_exists($newid)) {
+            msg('bibdataform: target page already exists!', -1);
+            return;
+        }
+        $auth = auth_quickaclcheck($newid);
+        if($auth < AUTH_CREATE) {
+            msg('bibdataform: user rights not sufficient to create target page!', -1);
+            return;
+        }
 
         // Upload file
-	$_POST['id'] = $_POST['Page_id'] . ".pdf";
-	$res = media_upload($ns, auth_quickaclcheck($ns . ":*"));
-	if(!$res) return;
+        $_POST['id'] = $_POST['Page_id'] . ".pdf";
+        $res = media_upload($ns, auth_quickaclcheck($ns . ":*"));
+        if(!$res) return;
 
         // Create page contents
-	$content = '<bibdata template=' . $_POST['template']
-	    . ' data=' . $_POST['Publication_date']
-	    . ' file=' . $_POST['Page_id'] . ".pdf>\n"
-	    . trim($_POST['BibTeX_source']) . "\n"
-	    . "</bibdata>\n";
-	saveWikiText($newid, $content, "created via Bibdata form.");
+        $content = '<bibdata template=' . $_POST['template']
+            . ' data=' . $_POST['Publication_date']
+            . ' file=' . $_POST['Page_id'] . ".pdf>\n"
+            . trim($_POST['BibTeX_source']) . "\n"
+            . "</bibdata>\n";
+        saveWikiText($newid, $content, "created via Bibdata form.");
     }
 
 
     function _hook_function_upload(&$event, $param) {
         // get namespace to display (either direct or from deletion order)
-	$NS = $_POST['ns'];
-	$NS = cleanID($NS);
+        $NS = $_POST['ns'];
+        $NS = cleanID($NS);
 
-	// check auth
-	$AUTH = auth_quickaclcheck("$NS:*");
-	if($AUTH < AUTH_UPLOAD) {
-	    msg($lang['uploadfail'], -1);
-	    return;
-	}
+        // check auth
+        $AUTH = auth_quickaclcheck("$NS:*");
+        if($AUTH < AUTH_UPLOAD) {
+            msg($lang['uploadfail'], -1);
+            return;
+        }
 
-	// handle upload
-	if($_FILES['upload']['tmp_name']){
-	    $_POST['id'] = $_POST['new_name'];
-	    $JUMPTO = media_upload($NS,$AUTH);
-	    if($JUMPTO) {
-		$NS = getNS($JUMPTO);
-		$ID = $_POST['Page_id'];
-		$NS = getNS($ID);
-	    }
-	}
+        // handle upload
+        if($_FILES['upload']['tmp_name']){
+            $_POST['id'] = $_POST['new_name'];
+            $JUMPTO = media_upload($NS,$AUTH);
+            if($JUMPTO) {
+                $NS = getNS($JUMPTO);
+                $ID = $_POST['Page_id'];
+                $NS = getNS($ID);
+            }
+        }
     }
 }

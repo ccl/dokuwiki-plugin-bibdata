@@ -28,10 +28,10 @@ if(count($entries) == 0) {
     $authors = $author_parser->parse($e['author']);
     $pageid = trim($authors[0][2]);
     if(array_key_exists('year', $e)) {
-	$pageid .= $e['year'];
+        $pageid .= $e['year'];
     }
     for($c = 'a'; $c != 'z'; $c++) {
-	if(!page_exists($targetns . ':' . $pageid . $c)) break;
+        if(!page_exists($targetns . ':' . $pageid . $c)) break;
     }
     $pageid = cleanID($pageid . $c);
 }

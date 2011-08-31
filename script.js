@@ -10,17 +10,17 @@ function checkSource() {
     status_div.innerHTML = 'BibTeX source seems ok!';
     status_div.style.color = 'green';
     if(doi_pos == -1) {
-	status_div.style.color = warn_color;
-	status_div.innerHTML = 'BibTeX source does not seem to contain the doi!';
+        status_div.style.color = warn_color;
+        status_div.innerHTML = 'BibTeX source does not seem to contain the doi!';
     }
     if(abstract_pos == -1) {
-	if(status_div.style.color == warn_color) {
-	    status_div.innerHTML = status_div.innerHTML.substr(0, status_div.innerHTML.length-1)
-		+ ', nor the abstract!';
-	} else {
-	    status_div.style.color = warn_color;
-	    status_div.innerHTML = 'BibTeX source does not seem to contain the abstract!';
-	}
+        if(status_div.style.color == warn_color) {
+            status_div.innerHTML = status_div.innerHTML.substr(0, status_div.innerHTML.length-1)
+                + ', nor the abstract!';
+        } else {
+            status_div.style.color = warn_color;
+            status_div.innerHTML = 'BibTeX source does not seem to contain the abstract!';
+        }
     }
 }
 
@@ -32,23 +32,23 @@ function checkCompleted() {
     status_div.innerHTML = 'BibTeX seems ok!';
     eval('var result = ' + myAjax.response);
     if(result.msg.length > 0) {
-	status_div.style.color = warn_color;
-	status_div.innerHTML = result.msg;
-	return;
+        status_div.style.color = warn_color;
+        status_div.innerHTML = result.msg;
+        return;
     }
     pageid_input.value = result.pageid;
     if(!result.has_doi) {
-	status_div.style.color = warn_color;
-	status_div.innerHTML = 'BibTeX source does not seem to contain the doi!';
+        status_div.style.color = warn_color;
+        status_div.innerHTML = 'BibTeX source does not seem to contain the doi!';
     }
     if(!result.has_abstract) {
-	if(status_div.style.color == warn_color) {
-	    status_div.innerHTML = status_div.innerHTML.substr(0, status_div.innerHTML.length-1)
-		+ ', nor the abstract!';
-	} else {
-	    status_div.style.color = warn_color;
-	    status_div.innerHTML = 'BibTeX source does not seem to contain the abstract!';
-	}
+        if(status_div.style.color == warn_color) {
+            status_div.innerHTML = status_div.innerHTML.substr(0, status_div.innerHTML.length-1)
+                + ', nor the abstract!';
+        } else {
+            status_div.style.color = warn_color;
+            status_div.innerHTML = 'BibTeX source does not seem to contain the abstract!';
+        }
     }
 }
 
