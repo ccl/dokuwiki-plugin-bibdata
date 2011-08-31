@@ -55,12 +55,13 @@ function checkCompleted() {
 function checkSourceAjax() {
     var status_div = $('bibdataform__status');
     var source_input = $('bibdataform__source');
+    var targetns = document.getElementsByName('targetns')[0];
 
     status_div.innerHTML = 'Please wait while parsing BibTeX...';
     myAjax.requestFile = DOKU_BASE + 'lib/plugins/bibdata/ajax/checkBibtex.php';
-    console.log(myAjax.requestFile);
     myAjax.method = "POST";
     myAjax.setVar('source', encodeURIComponent(source_input.value));
+    myAjax.setVar('targetns', encodeURIComponent(targetns.value));
     console.log(myAjax.URLString);
     myAjax.onCompletion = checkCompleted;
     myAjax.runAJAX();

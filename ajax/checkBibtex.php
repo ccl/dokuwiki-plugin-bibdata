@@ -1,8 +1,12 @@
 <?php
-require_once "../syntax/bibtexParse/PARSEENTRIES.php";
-require_once "../syntax/bibtexParse/PARSECREATORS.php";
+if(!defined('DOKU_INC')) define('DOKU_INC',realpath(dirname(__FILE__).'/../../../../').'/');
+require_once(DOKU_INC.'inc/init.php');
+require_once(DOKU_INC.'inc/pageutils.php');
+require_once("../syntax/bibtexParse/PARSEENTRIES.php");
+require_once("../syntax/bibtexParse/PARSECREATORS.php");
 
 $source = urldecode($_POST['source']);
+$targetns = urldecode($_POST['targetns']);
 
 $msg = '';
 $has_doi = false;
@@ -26,6 +30,10 @@ if(count($entries) == 0) {
     if(array_key_exists('year', $e)) {
 	$pageid .= $e['year'];
     }
+    for($c = 'a'; $c != 'z'; $c++) {
+	if(!page_exists($targetns . ':' . $pageid . $c)) break;
+    }
+    $pageid = cleanID($pageid . $c);
 }
 
 echo '{"msg": "'.$msg. '", "has_doi": ' . ($has_doi ? 'true' : 'false')
