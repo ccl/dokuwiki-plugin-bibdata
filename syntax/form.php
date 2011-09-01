@@ -70,7 +70,16 @@ class syntax_plugin_bibdata_form extends DokuWiki_Syntax_Plugin {
     function render($mode, &$R, $data) {
         $R->info['cache'] = false;
         if($mode == 'xhtml'){
-            $R->doc .= $this->_htmlform($data);
+            if(array_key_exists('success', $_POST)) {
+                $R->doc .= '<div id="bibdataform__success">' . NL;
+                $R->doc .= "The publication ";
+                $R->internallink($_POST['success']);
+                $R->doc .=' was created successfully. You should be '
+                    . 'automatically redirected within a few seconds.';
+                $R->doc .= '</div>';
+            } else {
+                $R->doc .= $this->_htmlform($data);
+            }
             return true;
         }
         return false;

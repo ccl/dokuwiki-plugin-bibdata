@@ -48,41 +48,19 @@ class action_plugin_bibdata extends DokuWiki_Action_Plugin {
         }
 
         // Upload file
-        $_POST['id'] = $_POST['Page_id'] . ".pdf";
-        $res = media_upload($ns, auth_quickaclcheck($ns . ":*"));
-        if(!$res) return;
+        if($_POST['upload']) {
+            $_POST['id'] = $_POST['Page_id'] . ".pdf";
+            $res = media_upload($ns, auth_quickaclcheck($ns . ":*"));
+            if(!$res) return;
+        }
 
         // Create page contents
         $content = '<bibdata template=' . $_POST['template']
             . ' data=' . $_POST['Publication_date']
-            . ' file=' . $_POST['Page_id'] . ".pdf>\n"
+            . ' file=' . $_POST['id'] . ">\n"
             . trim($_POST['BibTeX_source']) . "\n"
             . "</bibdata>\n";
         saveWikiText($newid, $content, "created via Bibdata form.");
-    }
-
-
-    function _hook_function_upload(&$event, $param) {
-        // get namespace to display (either direct or from deletion order)
-        $NS = $_POST['ns'];
-        $NS = cleanID($NS);
-
-        // check auth
-        $AUTH = auth_quickaclcheck("$NS:*");
-        if($AUTH < AUTH_UPLOAD) {
-            msg($lang['uploadfail'], -1);
-            return;
-        }
-
-        // handle upload
-        if($_FILES['upload']['tmp_name']){
-            $_POST['id'] = $_POST['new_name'];
-            $JUMPTO = media_upload($NS,$AUTH);
-            if($JUMPTO) {
-                $NS = getNS($JUMPTO);
-                $ID = $_POST['Page_id'];
-                $NS = getNS($ID);
-            }
-        }
+        $_POST['success'] = $newid;
     }
 }

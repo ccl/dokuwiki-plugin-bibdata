@@ -70,11 +70,18 @@ function checkSourceAjax() {
 function installSourceCheck()
 {
     var source_input = $('bibdataform__source');
-    if(source_input !== null)
-    {
+    if(source_input !== null) {
         addEvent(source_input, 'change', checkSourceAjax);
-        //addEvent(source_input, 'keyup', checkSource);
+    }
+}
+
+function redirectOnSuccess() {
+    var success_div = $('bibdataform__success');
+    if(success_div !== null) {
+        var dest = success_div.children[0].href;
+        setTimeout(function() {window.location =  dest;}, 3000);
     }
 }
 
 addInitEvent(installSourceCheck);
+addInitEvent(redirectOnSuccess);
