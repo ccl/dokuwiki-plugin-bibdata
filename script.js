@@ -24,7 +24,7 @@ function checkSource() {
     }
 }
 
-function checkCompleted() {
+function checkSourceCompleted() {
     var status_div = $('bibdataform__status');
     var source_input = $('bibdataform__source');
     var pageid_input = $('bibdataform__pageid');
@@ -52,6 +52,15 @@ function checkCompleted() {
     }
 }
 
+function checkPageIdCompleted() {
+    var pageid_input = $('bibdataform__pageid');
+    if(myAjax.response == "true") {
+        pageid_input.style.color = 'green';
+    } else {
+        pageid_input.style.color = 'red';
+    }
+}
+
 function checkSourceAjax() {
     var status_div = $('bibdataform__status');
     var source_input = $('bibdataform__source');
@@ -62,16 +71,32 @@ function checkSourceAjax() {
     myAjax.method = "POST";
     myAjax.setVar('source', encodeURIComponent(source_input.value));
     myAjax.setVar('targetns', encodeURIComponent(targetns.value));
-    console.log(myAjax.URLString);
-    myAjax.onCompletion = checkCompleted;
+    myAjax.onCompletion = checkSourceCompleted;
     myAjax.runAJAX();
 }
 
-function installSourceCheck()
+function checkPageIdAjax() {
+    var pageid_input = $('bibdataform__pageid');
+    var targetns = document.getElementsByName('targetns')[0];
+
+    myAjax.requestFile = DOKU_BASE + 'lib/plugins/bibdata/ajax/checkPageId.php';
+    myAjax.method = "POST";
+    myAjax.setVar('pageid', encodeURIComponent(pageid_input.value));
+    myAjax.setVar('targetns', encodeURIComponent(targetns.value));
+    console.log(myAjax.URLString);
+    myAjax.onCompletion = checkPageIdCompleted;
+    myAjax.runAJAX();
+}
+
+function installFormCheck()
 {
     var source_input = $('bibdataform__source');
+    var pageid_input = $('bibdataform__pageid');
     if(source_input !== null) {
         addEvent(source_input, 'change', checkSourceAjax);
+    }
+    if(pageid_input !== null) {
+        addEvent(pageid_input, 'change', checkPageIdAjax);
     }
 }
 
@@ -83,5 +108,5 @@ function redirectOnSuccess() {
     }
 }
 
-addInitEvent(installSourceCheck);
-addInitEvent(redirectOnSuccess);
+addInitEvent(installFormCheck);
+//addInitEvent(redirectOnSuccess);

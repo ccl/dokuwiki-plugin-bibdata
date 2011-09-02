@@ -38,4 +38,3 @@ if(count($entries) == 0) {
 
 echo '{"msg": "'.$msg. '", "has_doi": ' . ($has_doi ? 'true' : 'false')
 . ', "has_abstract": ' . ($has_abstract ? 'true' : 'false') . ', "pageid": "' . $pageid . '"}';
-//?>
