@@ -83,6 +83,9 @@ class syntax_plugin_bibdata_entry extends DokuWiki_Syntax_Plugin {
             $goodstring.=$author[3]?" ".$author[3]:"";
             $goodstring.=$author[2]?" ".chop($author[2]):"";
             $goodstring.=", ";
+
+
+
         }
         return chop($goodstring, ', ');
     }
@@ -100,6 +103,13 @@ class syntax_plugin_bibdata_entry extends DokuWiki_Syntax_Plugin {
             if($key == 'date') $key = 'date_dt';
             $out .= $key . ":" . $value . "\n";
         }
+        // Replace LaTeX accents with corresponding unicode
+        $replacements = explode("\n", file_get_contents(DOKU_PLUGIN . 'bibdata/syntax/accents.txt'));
+        foreach($replacements as $r) {
+            list($after, $before) = explode("   ", $r);
+            $bibtex = str_replace($before, $after, $bibtex);
+        }
+
         // Parse bibtex
         $parse = NEW PARSEENTRIES();
         $parse->expandMacro = TRUE;
@@ -107,9 +117,13 @@ class syntax_plugin_bibdata_entry extends DokuWiki_Syntax_Plugin {
         $parse->extractEntries();
         list($preamble, $strings, $entries, $undefinedStrings) = $parse->returnArrays();
         foreach ($entries as $entry){
+            // Remove braces inside author and title
             $a = new PARSECREATORS;
-            $out .= ("title:      ".$this->_cleancurl($entry['title'])."\n");
-            $out .= ("authors:    ".$this->_listauthors($a->parse($entry['author']))."\n");
+            $title = str_replace(array("{", "}"), array(), $this->_cleancurl($entry['title']));
+            $author = str_replace(array("{", "}"), array(), $this->_listauthors($a->parse($entry['author'])));
+            // Build output
+            $out .= ("title:      ".$title."\n");
+            $out .= ("authors:    ".$author."\n");
             $out .= ("journal:    ".$this->_cleancurl($entry['journal'])."\n");
             $out .= ("volume:     ".$this->_cleancurl($entry['volume'])."\n");
             $out .= ("page:       ".$this->_cleancurl($entry['pages'])."\n");
@@ -134,7 +148,7 @@ class syntax_plugin_bibdata_entry extends DokuWiki_Syntax_Plugin {
                 0 => array("pipe", "r"),  // stdin is a pipe that the child will read from
                 1 => array("pipe", "w"),  // stdout is a pipe that the child will write to
                 );
-            
+
             $path = DOKU_PLUGIN.'bibdata/bin/bibclean';
             if(file_exists($path)) {
                 $process = proc_open($path . ' -no-read-init-files -max-width 100', $descriptorspec, $pipes);
@@ -145,7 +159,7 @@ class syntax_plugin_bibdata_entry extends DokuWiki_Syntax_Plugin {
                 // 1 => readable handle connected to child stdout
                 // Any error output will be appended to /tmp/error-output.txt
 
-                fwrite($pipes[0], $data[bibtex]);
+                fwrite($pipes[0], $data['bibtex']);
                 fclose($pipes[0]);
 
                 $cleanbib = stream_get_contents($pipes[1]);
@@ -154,10 +168,9 @@ class syntax_plugin_bibdata_entry extends DokuWiki_Syntax_Plugin {
                 // It is important that you close any pipes before calling
                 // proc_close in order to avoid a deadlock
                 $return_value = proc_close($process);
-
-                $raw .= $cleanbib;
+                $raw .= $cleanbib ? $cleanbib : $data['bibtex'];
             } else {
-                $raw .= $data[bibtex];
+                $raw .= $data['bibtex'];
             }
             $raw .= '</code>' . "\n";
             $instr = p_get_instructions($raw);
