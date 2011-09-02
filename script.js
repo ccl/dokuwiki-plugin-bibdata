@@ -96,7 +96,7 @@ function installFormCheck()
         addEvent(source_input, 'change', checkSourceAjax);
     }
     if(pageid_input !== null) {
-        addEvent(pageid_input, 'change', checkPageIdAjax);
+        addEvent(pageid_input, 'keyup', checkPageIdAjax);
     }
 }
 
