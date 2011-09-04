@@ -104,7 +104,7 @@ class syntax_plugin_bibdata_form extends DokuWiki_Syntax_Plugin {
         $form->addElement(form_makeCloseTag('textarea'));
         $form->addElement(form_makeCloseTag('label'));
         $form->addElement(form_makeTextField('Page id', $_POST['Page_id'], 'Page id', '', 'edit', array('id' => 'bibdataform__pageid')));
-        $form->addElement(form_makeTextField('Publication date', $_POST['Publication_date'] ? $_POST['Publication_date'] : 'YYYY-MM-DD', 'Publication date', '', 'edit', array('class' => 'datepicker edit')));
+        $form->addElement(form_makeTextField('Publication date', $_POST['Publication_date'] ? $_POST['Publication_date'] : date("Y-m-d"), 'Publication date', '', 'edit', array('class' => 'datepicker edit')));
         $form->addElement(form_makeFileField('upload', 'PDF file', '', ''));
         $form->addElement(form_makeOpenTag('div', array('id' => 'bibdataform__status')));
         $form->addElement(form_makeCloseTag('div'));

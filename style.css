@@ -43,3 +43,8 @@ form.bibdataform_plugin label.row {
 	padding: 5px 10px;
 	text-align: left;
 }
+
+div#bibdataform__success {
+    border: 1px solid black;
+    padding: 10px;
+}
