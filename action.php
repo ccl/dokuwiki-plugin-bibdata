@@ -56,7 +56,7 @@ class action_plugin_bibdata extends DokuWiki_Action_Plugin {
 
         // Create page contents
         $content = '<bibdata template=' . $_POST['template']
-            . ' data=' . $_POST['Publication_date']
+            . ' date=' . $_POST['Publication_date']
             . ' file=' . $_POST['id'] . ">\n"
             . trim($_POST['BibTeX_source']) . "\n"
             . "</bibdata>\n";
