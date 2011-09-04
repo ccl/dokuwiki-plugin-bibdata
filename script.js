@@ -109,4 +109,4 @@ function redirectOnSuccess() {
 }
 
 addInitEvent(installFormCheck);
-//addInitEvent(redirectOnSuccess);
+addInitEvent(redirectOnSuccess);
