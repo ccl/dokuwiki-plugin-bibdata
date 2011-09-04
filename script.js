@@ -79,6 +79,11 @@ function checkPageIdAjax() {
     var pageid_input = $('bibdataform__pageid');
     var targetns = document.getElementsByName('targetns')[0];
 
+    if(myAjax.URLString.length > 0) {
+        // Ajax not ready yet
+        setTimeout("checkPageIdAjax()", 100);
+        return;
+    }
     myAjax.requestFile = DOKU_BASE + 'lib/plugins/bibdata/ajax/checkPageId.php';
     myAjax.method = "POST";
     myAjax.setVar('pageid', encodeURIComponent(pageid_input.value));
