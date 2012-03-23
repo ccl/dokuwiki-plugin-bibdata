@@ -49,7 +49,8 @@ class action_plugin_bibdata extends DokuWiki_Action_Plugin {
 
         // Upload file
         if(!$_FILES['upload']['error']) {
-            $_POST['id'] = $_POST['Page_id'] . ".pdf";
+            var_dump($_FILES);
+            $_POST['mediaid'] = $_POST['Page_id'] . ".pdf";
             $res = media_upload($ns, auth_quickaclcheck($ns . ":*"));
             if(!$res) return;
         }
@@ -57,7 +58,7 @@ class action_plugin_bibdata extends DokuWiki_Action_Plugin {
         // Create page contents
         $content = '<bibdata template=' . $_POST['template']
             . ' date=' . $_POST['Publication_date']
-            . ' file=' . $_POST['id'] . ">\n"
+            . ' file=' . $_POST['mediaid'] . ">\n"
             . trim($_POST['BibTeX_source']) . "\n"
             . "</bibdata>\n";
         saveWikiText($newid, $content, "created via Bibdata form.");
