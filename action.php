@@ -49,7 +49,6 @@ class action_plugin_bibdata extends DokuWiki_Action_Plugin {
 
         // Upload file
         if(!$_FILES['upload']['error']) {
-            var_dump($_FILES);
             $_POST['mediaid'] = $_POST['Page_id'] . ".pdf";
             $res = media_upload($ns, auth_quickaclcheck($ns . ":*"));
             if(!$res) return;
